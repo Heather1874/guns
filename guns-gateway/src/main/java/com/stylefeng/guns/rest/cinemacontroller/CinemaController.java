@@ -9,7 +9,8 @@ import com.stylefeng.guns.rest.cinema.bean.CinemaItem;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.stylefeng.guns.rest.common.CinemaReqsVo;
-import org.springframework.web.bind.annotation.RequestMapping;
+
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +19,7 @@ import java.util.Map;
 
 @RestController
 public class CinemaController {
+
     @Reference(interfaceClass = CinemaService.class)
     CinemaService cinemaService;
 
@@ -25,8 +27,6 @@ public class CinemaController {
      * 用于获取影院列表以及影厅列表
      * 集成了查找功能
      * <p>
-     *
-     *
      * @param map
      * @return
      */
@@ -39,7 +39,11 @@ public class CinemaController {
         return cinemaReqsVo;
     }
 
-
+    /**
+     * 获取影院场次
+     * @param cinemaId
+     * @return
+     */
     @RequestMapping("/cinema/getFields")
     public CinemaReqsVo getFields(Integer cinemaId) {
         CinemaReqsVo cinemaReqsVo = new CinemaReqsVo();
@@ -60,6 +64,22 @@ public class CinemaController {
         CinemaReqsVo cinemaReqsVo = new CinemaReqsVo();
         Map resultMap = cinemaService.getConditions(map);
         cinemaReqsVo.setData(resultMap);
-        return cinemaReqsVo;
+       return cinemaReqsVo;
     }
+
+    /**
+     * 获取场次详细信息接口
+     * @param cinemaId
+     * @param fieldId
+     * @return
+     */
+    @RequestMapping(value = "/cinema/getFieldInfo",method = RequestMethod.POST)
+    public CinemaReqsVo getFieldInfo(Integer cinemaId,Integer fieldId){
+        CinemaReqsVo cinemaReqsVo = new CinemaReqsVo();
+        Map fieldInfoMap = cinemaService.getFieldInfo(cinemaId,fieldId);
+        cinemaReqsVo.setData(fieldInfoMap);
+        return cinemaReqsVo;
+
+
+}
 }

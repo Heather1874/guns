@@ -10,4 +10,6 @@ public interface CinemaService {
     Map getFields(Integer cinemaId);
 
     Map getConditions(Map map);
+
+    Map getFieldInfo(Integer cinemaId, Integer fieldId);
 }
