@@ -1,0 +1,50 @@
+
+用户 → 金、万、彭
+电影 → 周、苟
+影院 → 唐、陈
+
+
+电影 film → 周、苟
+    周 →
+    2、影片条件列表查询接口 /film/getConditionList
+    ↓
+    4、影片详情查询接口 /film/films/{影片编号}
+
+    苟 →
+    3、影片查询接口 /film/getFilms
+
+
+影院 cinema → 唐、陈
+
+    陈 →
+    1、查询影院列表-根据条件查询所有影院 /cinema/getCinemas? brandId=30227&districtId=14&hallType=2
+    ↓
+    2、获取影院列表查询条件 /cinema/getCondition
+
+    唐 →
+    3、获取播放场次接口 /cinema/getFields
+    ↓
+    4、获取场次详细信息接口 /cinema/getFieldInfo
+
+
+用户 user → 金、万、彭
+
+    万 →
+    1、首页接口 /film/getIndex
+    ↓
+    2、用户名验证接口 /user/check
+
+    3、用户登陆接口 /auth
+
+    4、用户退出接口 /user/logout
+
+    金 →
+    1、用户注册接口 /user/register
+    ↓
+    6、用户信息修改接口 /user/updateUserInfo
+
+    彭 →
+    5、用户信息查询接口 /user/getUserInfo
+
+
+
