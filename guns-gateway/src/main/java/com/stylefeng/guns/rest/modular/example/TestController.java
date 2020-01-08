@@ -1,3 +1,4 @@
+/*
 package com.stylefeng.guns.rest.modular.example;
 
 import com.alibaba.dubbo.config.annotation.Reference;
@@ -21,3 +22,4 @@ public class TestController {
         return nameById;
     }
 }
+*/
