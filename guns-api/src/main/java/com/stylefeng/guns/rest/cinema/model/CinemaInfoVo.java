@@ -1,12 +1,18 @@
-package com.stylefeng.guns.rest.common.persistence.model;
+package com.stylefeng.guns.rest.cinema.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+
 /*
 * 用来接收播放场次里面cinemaInfo的信息
 * */
 @Data
-
-public class CinemaInfo {
+@NoArgsConstructor
+@AllArgsConstructor
+public class CinemaInfoVo implements Serializable {
 
     private Integer cinemaId;
 
