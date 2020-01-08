@@ -1,9 +1,9 @@
 package com.stylefeng.guns.rest.cinemacontroller;
 
+
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.stylefeng.guns.rest.cinema.CinemaService;
 import com.stylefeng.guns.rest.common.CinemaReqsVo;
-import com.stylefeng.guns.rest.common.resultenum.CinemaEnums;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;

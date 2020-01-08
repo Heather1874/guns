@@ -1,7 +1,6 @@
 package com.stylefeng.guns.rest.service.impl;
 
 
-import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.stylefeng.guns.rest.cinema.CinemaService;
 import com.stylefeng.guns.rest.common.persistence.dao.MtimeCinemaTMapper;
