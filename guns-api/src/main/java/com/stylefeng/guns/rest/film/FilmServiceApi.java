@@ -1,5 +1,7 @@
 package com.stylefeng.guns.rest.film;
 
+import java.util.Map;
+
 /**
  * Created by IntelliJ IDEA.
  * User: ZhouMingZhuang
@@ -7,4 +9,5 @@ package com.stylefeng.guns.rest.film;
  * Time: 17:29
  */
 public interface FilmServiceApi {
+    Map getIndex();
 }
