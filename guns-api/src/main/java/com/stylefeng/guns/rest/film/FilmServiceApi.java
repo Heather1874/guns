@@ -1,5 +1,9 @@
 package com.stylefeng.guns.rest.film;
 
+import com.stylefeng.guns.rest.film.param.FilmGetConditionListParam;
+
+import java.util.Map;
+
 /**
  * Created by IntelliJ IDEA.
  * User: ZhouMingZhuang
@@ -7,4 +11,5 @@ package com.stylefeng.guns.rest.film;
  * Time: 17:29
  */
 public interface FilmServiceApi {
+    Map getFilmConditionList(FilmGetConditionListParam params);
 }

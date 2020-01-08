@@ -10,6 +10,6 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
  * @author stylefeng
  * @since 2017-08-23
  */
-public interface UserMapper extends BaseMapper<User> {
+public interface UserMapper extends BaseMapper<Object> {
 
 }
