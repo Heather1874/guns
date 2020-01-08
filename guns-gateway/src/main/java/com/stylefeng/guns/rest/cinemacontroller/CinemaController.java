@@ -30,5 +30,6 @@ public class CinemaController {
     public CinemaReqsVo getFields(Integer cinemaId) {
         CinemaReqsVo cinemaReqsVo = new CinemaReqsVo();
        Map fieldMap = cinemaService.getFields(cinemaId);
+       return null;
     }
 }
