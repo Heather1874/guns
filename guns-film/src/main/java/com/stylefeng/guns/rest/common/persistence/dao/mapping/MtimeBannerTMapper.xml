@@ -10,4 +10,11 @@
         <result column="is_valid" property="isValid" />
     </resultMap>
 
+    <select id="selectListByStatus" resultType="com.stylefeng.guns.rest.film.vo.NewBannerInfo">
+        select UUID as bannerId, banner_address as bannerAddress, banner_url as bannerUrl from mtime_banner_t
+        <where>
+            is_valid = #{isValid}
+        </where>
+    </select>
+
 </mapper>

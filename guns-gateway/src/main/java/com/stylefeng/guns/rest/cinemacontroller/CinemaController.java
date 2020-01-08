@@ -36,6 +36,7 @@ public class CinemaController {
     public CinemaReqsVo getFields(Integer cinemaId) {
         CinemaReqsVo cinemaReqsVo = new CinemaReqsVo();
        Map fieldMap = cinemaService.getFields(cinemaId);
+
        cinemaReqsVo.setData(fieldMap);
        return cinemaReqsVo;
     }
@@ -52,5 +53,7 @@ public class CinemaController {
         Map fieldInfoMap = cinemaService.getFieldInfo(cinemaId,fieldId);
         cinemaReqsVo.setData(fieldInfoMap);
         return cinemaReqsVo;
-    }
+
+
+}
 }
