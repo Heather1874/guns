@@ -1,4 +1,13 @@
 package com.stylefeng.guns.rest.service.impl;
 
-public interface CinemaServiceImpl {
+
+import com.alibaba.dubbo.config.annotation.Service;
+import com.stylefeng.guns.rest.cinema.CinemaService;
+import org.springframework.stereotype.Component;
+
+@Component
+@Service(interfaceClass = CinemaService.class)
+public class CinemaServiceImpl implements CinemaService {
+
+
 }
