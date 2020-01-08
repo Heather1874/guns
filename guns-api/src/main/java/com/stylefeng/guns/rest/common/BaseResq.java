@@ -1,4 +1,10 @@
 package com.stylefeng.guns.rest.common;
 
-public class BaseResq {
+import lombok.Data;
+
+@Data
+public class BaseResq<T> {
+    T data;
+    Integer status;
+    String msg;
 }
