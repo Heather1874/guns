@@ -1,6 +1,12 @@
 package com.stylefeng.guns.rest.film;
 
 import com.stylefeng.guns.rest.film.param.FilmGetConditionListParam;
+import com.stylefeng.guns.rest.film.param.FilmGetFilmsParam;
+import com.stylefeng.guns.rest.film.vo.FilmConditionVo;
+import com.stylefeng.guns.rest.film.vo.FilmDetail;
+
+
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,8 +17,11 @@ import java.util.Map;
  */
 public interface FilmServiceApi {
 
+
     Map getIndex();
 
-    Map getFilmConditionList(FilmGetConditionListParam params);
+    FilmConditionVo getFilmConditionList(FilmGetConditionListParam params);
+
+    List<FilmDetail> getFilmsByCondition(FilmGetFilmsParam params);
 
 }

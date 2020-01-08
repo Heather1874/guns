@@ -4,13 +4,18 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.stylefeng.guns.rest.common.persistence.dao.MtimeBannerTMapper;
 import com.stylefeng.guns.rest.common.persistence.dao.MtimeCatDictTMapper;
+import com.stylefeng.guns.rest.common.persistence.dao.MtimeFilmTMapper;
 import com.stylefeng.guns.rest.common.persistence.dao.MtimeSourceDictTMapper;
 import com.stylefeng.guns.rest.common.persistence.dao.MtimeYearDictTMapper;
 import com.stylefeng.guns.rest.common.persistence.model.MtimeCatDictT;
+import com.stylefeng.guns.rest.common.persistence.model.MtimeFilmT;
 import com.stylefeng.guns.rest.common.persistence.model.MtimeSourceDictT;
 import com.stylefeng.guns.rest.common.persistence.model.MtimeYearDictT;
 import com.stylefeng.guns.rest.film.FilmServiceApi;
 import com.stylefeng.guns.rest.film.param.FilmGetConditionListParam;
+import com.stylefeng.guns.rest.film.param.FilmGetFilmsParam;
+import com.stylefeng.guns.rest.film.vo.*;
+
 import com.stylefeng.guns.rest.film.vo.NewCatInfo;
 import com.stylefeng.guns.rest.film.vo.NewIndexInfo;
 import com.stylefeng.guns.rest.film.vo.NewSourceInfo;
@@ -42,9 +47,12 @@ public class FilmServiceApiImpl implements FilmServiceApi {
     @Autowired
     MtimeYearDictTMapper mtimeYearDictTMapper;
 
+    @Autowired
+    MtimeFilmTMapper mtimeFilmTMapper;
+
     @Override
-    public Map getFilmConditionList(FilmGetConditionListParam params) {
-        Map map = new HashMap();
+    public FilmConditionVo getFilmConditionList(FilmGetConditionListParam params) {
+        FilmConditionVo filmConditionVo = new FilmConditionVo();
         //catInfo
         EntityWrapper<MtimeCatDictT> catDictTEntityWrapper = new EntityWrapper<>();
         List<MtimeCatDictT> catDictTS = mtimeCatDictTMapper.selectList(catDictTEntityWrapper);
@@ -57,7 +65,7 @@ public class FilmServiceApiImpl implements FilmServiceApi {
                 catInfo.setActive(true);
             catInfos.add(catInfo);
         }
-        map.put("catInfo", catInfos);
+        filmConditionVo.setCatInfo(catInfos);
 
         //sourceInfo
         EntityWrapper<MtimeSourceDictT> sourceDictTEntityWrapper = new EntityWrapper<>();
@@ -71,7 +79,7 @@ public class FilmServiceApiImpl implements FilmServiceApi {
                 sourceInfo.setActive(true);
             sourceInfos.add(sourceInfo);
         }
-        map.put("sourceInfo",sourceInfos);
+        filmConditionVo.setSourceInfo(sourceInfos);
         //yearInfo
         EntityWrapper<MtimeYearDictT> yearDictTEntityWrapper = new EntityWrapper<>();
         List<MtimeYearDictT> yearDictTS = mtimeYearDictTMapper.selectList(yearDictTEntityWrapper);
@@ -83,8 +91,23 @@ public class FilmServiceApiImpl implements FilmServiceApi {
             if (params.getYearId() == yearDictT.getUuid())
                 yearInfo.setActive(true);
         }
-        map.put("yearInfo",yearInfos);
-        return map;
+        filmConditionVo.setYearInfo(yearInfos);
+        return filmConditionVo;
+    }
+
+    @Override
+    public List<FilmDetail> getFilmsByCondition(FilmGetFilmsParam params) {
+        EntityWrapper<MtimeFilmT> filmTEntityWrapper = new EntityWrapper<>();
+        filmTEntityWrapper.eq("film_status",params.getShowType());
+        filmTEntityWrapper.eq("film_cats",params.getCatId());
+        filmTEntityWrapper.eq("film_source",params.getSourceId());
+        filmTEntityWrapper.eq("film_date",params.getYearId());
+        if (params.getSortId() == 1) {
+            filmTEntityWrapper.orderBy("film_box_office");
+        }
+        List<MtimeFilmT> mtimeFilmTS = mtimeFilmTMapper.selectList(filmTEntityWrapper);
+
+        return null;
     }
 
     @Autowired
