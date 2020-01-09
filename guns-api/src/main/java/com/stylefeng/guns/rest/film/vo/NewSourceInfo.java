@@ -2,6 +2,8 @@ package com.stylefeng.guns.rest.film.vo;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * Created by IntelliJ IDEA.
  * User: ZhouMingZhuang
@@ -9,7 +11,7 @@ import lombok.Data;
  * Time: 17:16
  */
 @Data
-public class NewSourceInfo {
+public class  NewSourceInfo implements Serializable {
     private Boolean active;
 
     private Integer sourceId;

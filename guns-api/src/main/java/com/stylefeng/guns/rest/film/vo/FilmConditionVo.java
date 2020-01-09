@@ -2,6 +2,7 @@ package com.stylefeng.guns.rest.film.vo;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ import java.util.List;
  * Time: 20:35
  */
 @Data
-public class FilmConditionVo {
+public class FilmConditionVo implements Serializable {
 
     private List<NewCatInfo> catInfo;
 

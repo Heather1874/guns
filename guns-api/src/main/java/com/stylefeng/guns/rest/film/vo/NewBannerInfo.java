@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class NewBannerInfo implements Serializable {
+public class NewBannerInfo {
     String bannerAddress;
     String bannerId;
     String bannerUrl;

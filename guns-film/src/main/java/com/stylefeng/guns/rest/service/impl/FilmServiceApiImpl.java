@@ -2,15 +2,8 @@ package com.stylefeng.guns.rest.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.stylefeng.guns.rest.common.persistence.dao.MtimeBannerTMapper;
-import com.stylefeng.guns.rest.common.persistence.dao.MtimeCatDictTMapper;
-import com.stylefeng.guns.rest.common.persistence.dao.MtimeFilmTMapper;
-import com.stylefeng.guns.rest.common.persistence.dao.MtimeSourceDictTMapper;
-import com.stylefeng.guns.rest.common.persistence.dao.MtimeYearDictTMapper;
-import com.stylefeng.guns.rest.common.persistence.model.MtimeCatDictT;
-import com.stylefeng.guns.rest.common.persistence.model.MtimeFilmT;
-import com.stylefeng.guns.rest.common.persistence.model.MtimeSourceDictT;
-import com.stylefeng.guns.rest.common.persistence.model.MtimeYearDictT;
+import com.stylefeng.guns.rest.common.persistence.dao.*;
+import com.stylefeng.guns.rest.common.persistence.model.*;
 import com.stylefeng.guns.rest.film.FilmServiceApi;
 import com.stylefeng.guns.rest.film.param.FilmGetConditionListParam;
 import com.stylefeng.guns.rest.film.param.FilmGetFilmsParam;
@@ -49,6 +42,15 @@ public class FilmServiceApiImpl implements FilmServiceApi {
 
     @Autowired
     MtimeFilmTMapper mtimeFilmTMapper;
+
+    @Autowired
+    MtimeFilmInfoTMapper mtimeFilmInfoTMapper;
+
+    @Autowired
+    MtimeFilmActorTMapper mtimeFilmActorTMapper;
+
+    @Autowired
+    MtimeActorTMapper mtimeActorTMapper;
 
     @Override
     public FilmConditionVo getFilmConditionList(FilmGetConditionListParam params) {
@@ -90,6 +92,7 @@ public class FilmServiceApiImpl implements FilmServiceApi {
             yearInfo.setYearId(yearDictT.getUuid());
             if (params.getYearId() == yearDictT.getUuid())
                 yearInfo.setActive(true);
+            yearInfos.add(yearInfo);
         }
         filmConditionVo.setYearInfo(yearInfos);
         return filmConditionVo;
@@ -98,23 +101,193 @@ public class FilmServiceApiImpl implements FilmServiceApi {
     @Override
     public List<FilmDetail> getFilmsByCondition(FilmGetFilmsParam params) {
         EntityWrapper<MtimeFilmT> filmTEntityWrapper = new EntityWrapper<>();
-        filmTEntityWrapper.eq("film_status",params.getShowType());
-        filmTEntityWrapper.eq("film_cats",params.getCatId());
-        filmTEntityWrapper.eq("film_source",params.getSourceId());
-        filmTEntityWrapper.eq("film_date",params.getYearId());
+        filmTEntityWrapper.eq("film_status", params.getShowType());
+        filmTEntityWrapper.like("film_cats", "#" + params.getCatId() + "#");
+        filmTEntityWrapper.eq("film_source", params.getSourceId());
+        filmTEntityWrapper.eq("film_date", params.getYearId());
         if (params.getSortId() == 1) {
             filmTEntityWrapper.orderBy("film_box_office");
         }
         List<MtimeFilmT> mtimeFilmTS = mtimeFilmTMapper.selectList(filmTEntityWrapper);
-
-        return null;
+        return getFilmDetailList(mtimeFilmTS);
     }
+
+
+    @Override
+    public List<FilmDetail> getFilmsByIntegerKeyWord(Integer keyWord) {
+        EntityWrapper<MtimeFilmT> filmTEntityWrapper = new EntityWrapper<>();
+        filmTEntityWrapper.eq("UUID", keyWord);
+        List<MtimeFilmT> mtimeFilmTS = mtimeFilmTMapper.selectList(filmTEntityWrapper);
+        return getFilmDetailList(mtimeFilmTS);
+    }
+
+    @Override
+    public List<FilmDetail> getFilmsByStringKeyWord(String kw) {
+        EntityWrapper<MtimeFilmT> filmTEntityWrapper = new EntityWrapper<>();
+        filmTEntityWrapper.like("film_name", kw);
+        List<MtimeFilmT> mtimeFilmTS = mtimeFilmTMapper.selectList(filmTEntityWrapper);
+        return getFilmDetailList(mtimeFilmTS);
+    }
+
+    @Override
+    public FilmDetailVo getFilmDetailById(String filmId) {
+        EntityWrapper<MtimeFilmT> filmTEntityWrapper = new EntityWrapper<>();
+        filmTEntityWrapper.eq("UUID", filmId);
+        List<MtimeFilmT> mtimeFilmTS = mtimeFilmTMapper.selectList(filmTEntityWrapper);
+        MtimeFilmT mtimeFilmT = null;
+        if (mtimeFilmTS != null && mtimeFilmTS.size() > 0)
+            mtimeFilmT = mtimeFilmTS.get(0);
+        else return null;
+        return getFilmDetailVo(mtimeFilmT);
+    }
+
+    @Override
+    public FilmDetailVo getFilmDetailByName(String filmName) {
+        EntityWrapper<MtimeFilmT> filmTEntityWrapper = new EntityWrapper<>();
+        filmTEntityWrapper.in("film_name", filmName);
+        List<MtimeFilmT> mtimeFilmTS = mtimeFilmTMapper.selectList(filmTEntityWrapper);
+        MtimeFilmT mtimeFilmT = new MtimeFilmT();
+        if (mtimeFilmTS != null && mtimeFilmTS.size() > 0)
+            mtimeFilmT = mtimeFilmTS.get(0);
+        else
+            return null;
+        return getFilmDetailVo(mtimeFilmT);
+    }
+
+    private FilmDetailVo getFilmDetailVo(MtimeFilmT mtimeFilmT) {
+        /*EntityWrapper<MtimeFilmInfoT> filmInfoTEntityWrapper = new EntityWrapper<>();
+        filmInfoTEntityWrapper.eq("film_id", mtimeFilmT.getUuid());
+        List<MtimeFilmInfoT> mtimeFilmInfoTS = mtimeFilmInfoTMapper.selectList(filmInfoTEntityWrapper);
+        MtimeFilmInfoT mtimeFilmInfoT = null;
+        if (mtimeFilmInfoTS != null && mtimeFilmInfoTS.size() > 0)
+            mtimeFilmInfoT = mtimeFilmInfoTS.get(0);*/
+        MtimeFilmInfoT mtimeFilmInfoT = mtimeFilmInfoTMapper.selectById(mtimeFilmT.getUuid());
+
+        EntityWrapper<MtimeFilmActorT> filmActorTEntityWrapper = new EntityWrapper<>();
+        filmActorTEntityWrapper.eq("film_id", mtimeFilmT.getUuid());
+        List<MtimeFilmActorT> mtimeFilmActorTS = mtimeFilmActorTMapper.selectList(filmActorTEntityWrapper);
+
+        //info01
+        String filmCats = mtimeFilmT.getFilmCats();
+        String[] filmCatList = filmCats.split("#");
+        StringBuffer info01StringBuffer = new StringBuffer();
+        EntityWrapper<MtimeCatDictT> catDictTEntityWrapper = new EntityWrapper<>();
+        catDictTEntityWrapper.in("UUID", filmCatList);
+        List<MtimeCatDictT> mtimeCatDictTS = mtimeCatDictTMapper.selectList(catDictTEntityWrapper);
+        for (MtimeCatDictT mtimeCatDictT : mtimeCatDictTS) {
+            info01StringBuffer.append(",").append(mtimeCatDictT.getShowName());
+        }
+        info01StringBuffer.deleteCharAt(0);
+        String info01 = info01StringBuffer.toString();
+
+        //info02
+        MtimeSourceDictT mtimeSourceDictT = mtimeSourceDictTMapper.selectById(mtimeFilmT.getFilmSource());
+        String info02 = "";
+        info02 += mtimeSourceDictT.getShowName() + "/" + mtimeFilmInfoT.getFilmLength();
+
+        //info03
+        String info03 = mtimeFilmT.getFilmTime().toString();
+        info03 += mtimeSourceDictT.getShowName() + "上映";
+
+        Map info04 = new HashMap();
+        Map actors = new HashMap();
+        List<ActorVo> actorVoList = new ArrayList<>(mtimeFilmActorTS.size());
+        if (mtimeFilmActorTS != null && mtimeFilmActorTS.size() > 0) {
+            for (MtimeFilmActorT mtimeFilmActorT : mtimeFilmActorTS) {
+                EntityWrapper<MtimeActorT> actorTEntityWrapper = new EntityWrapper<>();
+                actorTEntityWrapper.eq("UUID", mtimeFilmActorT.getActorId());
+                // 如果报错就是这了
+                MtimeActorT mtimeActorT = mtimeActorTMapper.selectById(mtimeFilmActorT.getActorId());
+                ActorVo actorVo = new ActorVo();
+                actorVo.setRoleName(mtimeFilmActorT.getRoleName());
+                actorVo.setImgAddress(mtimeActorT.getActorImg());
+                actorVo.setDirectorName(mtimeActorT.getActorName());
+                actorVoList.add(actorVo);
+                if (mtimeFilmInfoT.getDirectorId() == mtimeFilmActorT.getActorId()) {
+                    ActorVo director = new ActorVo();
+                    director.setImgAddress(mtimeActorT.getActorImg());
+                    director.setDirectorName(mtimeActorT.getActorName());
+                    actors.put("director", director);
+                }
+            }
+            actors.put("actors", actorVoList);
+        }
+        if (mtimeFilmInfoT.getFilmImgs() != null) {
+            String imgs = mtimeFilmInfoT.getFilmImgs();
+            String[] imgList = imgs.split(",");
+            Map imgVO = new HashMap();
+            for (int i = 0; i < imgList.length; i++) {
+                String img = imgList[i];
+                img.replace("films/", "");
+                if (i != 0) {
+                    imgVO.put("img0" + i, img);
+                } else {
+                    imgVO.put("mainImg", img);
+                }
+            }
+            info04.put("imgVO", imgVO);
+        }
+        info04.put("actors", actors);
+        info04.put("biopgraphy", mtimeFilmInfoT.getBiography());
+        info04.put("filmId", mtimeFilmInfoT.getFilmId());
+        // imgVO以后再来封装
+        FilmDetailVo filmDetailVo = new FilmDetailVo();
+        filmDetailVo.setFilmEnName(mtimeFilmInfoT.getFilmEnName());
+        filmDetailVo.setFilmId(mtimeFilmT.getUuid().toString());
+        filmDetailVo.setFilmName(mtimeFilmT.getFilmName());
+        filmDetailVo.setImgAddress(mtimeFilmT.getImgAddress());
+
+        filmDetailVo.setInfo01(info01);
+        filmDetailVo.setInfo02(info02);
+        filmDetailVo.setInfo03(info03);
+        filmDetailVo.setInfo04(info04);
+        filmDetailVo.setScore(mtimeFilmInfoT.getFilmScore());
+        filmDetailVo.setScoreNum(mtimeFilmInfoT.getFilmScoreNum().toString());
+        filmDetailVo.setTotalBox(mtimeFilmT.getFilmBoxOffice().toString());
+
+        return filmDetailVo;
+    }
+
+
+
+
+    private List<FilmDetail> getFilmDetailList(List<MtimeFilmT> mtimeFilmTS) {
+        if (mtimeFilmTS == null || mtimeFilmTS.size() == 0)
+            return null;
+        List<FilmDetail> filmDetailList = new ArrayList<>(mtimeFilmTS.size());
+        for (MtimeFilmT mtimeFilmT : mtimeFilmTS) {
+            EntityWrapper<MtimeFilmInfoT> filmInfoTEntityWrapper = new EntityWrapper<>();
+            filmInfoTEntityWrapper.eq("film_id", mtimeFilmT.getUuid());
+            List<MtimeFilmInfoT> mtimeFilmInfoTS = mtimeFilmInfoTMapper.selectList(filmInfoTEntityWrapper);
+            MtimeFilmInfoT mtimeFilmInfoT = new MtimeFilmInfoT();
+            if (mtimeFilmInfoTS != null && mtimeFilmInfoTS.size() > 0)
+                mtimeFilmInfoT = mtimeFilmInfoTS.get(0);
+
+            FilmDetail filmDetail = new FilmDetail();
+            filmDetail.setBoxNum(mtimeFilmT.getFilmBoxOffice());
+            filmDetail.setExpectNum(mtimeFilmT.getFilmPresalenum());
+            filmDetail.setFilmCats(mtimeFilmT.getFilmCats());
+            filmDetail.setFilmId(mtimeFilmT.getUuid().toString());
+            filmDetail.setFilmLength(mtimeFilmInfoT.getFilmLength().toString());
+            filmDetail.setFilmName(mtimeFilmT.getFilmName());
+            filmDetail.setFilmScore(mtimeFilmInfoT.getFilmScore());
+            filmDetail.setFilmType(mtimeFilmT.getFilmType());
+            filmDetail.setImgAddress(mtimeFilmT.getImgAddress());
+            filmDetail.setScore(mtimeFilmT.getFilmScore());
+            filmDetail.setShowTime(mtimeFilmT.getFilmTime().toString());
+
+            filmDetailList.add(filmDetail);
+        }
+        return filmDetailList;
+    }
+
 
     @Autowired
     MtimeBannerTMapper bannerTMapper;
 
     /**
      * 获取首页信息
+     *
      * @return
      */
     @Override
