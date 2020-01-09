@@ -137,4 +137,13 @@ public class UserServiceImpl implements UserService {
         user.setUpdateTime(user.getBeginTime());
         return user;
     }
+
+    @Override
+    public boolean queryUserByNamePassword(String userName, String password) {
+        EntityWrapper<MtimeUserT> userTEntityWrapper = new EntityWrapper<>();
+        userTEntityWrapper.eq("user_name", userName);
+        userTEntityWrapper.eq("user_pwd", MD5Util.encrypt(password));
+        Integer count = userTMapper.selectCount(userTEntityWrapper);
+        return count == 1;
+    }
 }
