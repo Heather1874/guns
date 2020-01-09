@@ -8,6 +8,7 @@ import com.stylefeng.guns.rest.film.param.FilmGetConditionListParam;
 import com.stylefeng.guns.rest.film.param.FilmGetFilmsParam;
 import com.stylefeng.guns.rest.film.vo.FilmConditionVo;
 import com.stylefeng.guns.rest.film.vo.FilmDetail;
+import com.stylefeng.guns.rest.film.vo.NewIndexInfo;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +25,20 @@ public class FilmController {
 
     @Reference(interfaceClass = FilmServiceApi.class)
     FilmServiceApi filmServiceApi;
+
+    /**
+     * 获取首页信息
+     * @return
+     */
+    @RequestMapping("/film/getIndex")
+    public BaseResqVo<Object> getIndex() {
+
+        NewIndexInfo newIndexInfo = filmServiceApi.getIndex();
+
+        BaseResqVo<Object> baseResqVo = new BaseResqVo<>();
+        baseResqVo.setData(newIndexInfo);
+        return baseResqVo;
+    }
 
     @RequestMapping("/film/getConditionList")
     public FilmReqsVo getFilmConditionListList(FilmGetConditionListParam params) {

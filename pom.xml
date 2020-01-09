@@ -21,7 +21,6 @@
         <module>guns-utils</module>
         <module>guns-seckill</module>
         <module>guns-api</module>
-        <module>guns-beann</module>
     </modules>
 
     <parent>
