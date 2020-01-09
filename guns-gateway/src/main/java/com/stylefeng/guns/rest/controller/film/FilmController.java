@@ -1,6 +1,7 @@
 package com.stylefeng.guns.rest.controller.film;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.stylefeng.guns.rest.common.BaseResqVo;
 import com.stylefeng.guns.rest.common.FilmReqsVo;
 import com.stylefeng.guns.rest.film.FilmServiceApi;
 import com.stylefeng.guns.rest.film.param.FilmGetConditionListParam;
@@ -9,6 +10,7 @@ import com.stylefeng.guns.rest.film.vo.FilmConditionVo;
 import com.stylefeng.guns.rest.film.vo.FilmDetail;
 import com.stylefeng.guns.rest.film.vo.FilmDetailVo;
 import org.springframework.web.bind.annotation.PathVariable;
+import com.stylefeng.guns.rest.film.vo.NewIndexInfo;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,9 +33,18 @@ public class FilmController {
     /**
      * 列出影片的条件（类型、区域、年代）
      *
-     * @param params
      * @return
      */
+    @RequestMapping("/film/getIndex")
+    public BaseResqVo<Object> getIndex() {
+
+        NewIndexInfo newIndexInfo = filmServiceApi.getIndex();
+
+        BaseResqVo<Object> baseResqVo = new BaseResqVo<>();
+        baseResqVo.setData(newIndexInfo);
+        return baseResqVo;
+    }
+
     @RequestMapping("/film/getConditionList")
     public FilmReqsVo getFilmConditionListList(FilmGetConditionListParam params) {
         FilmReqsVo<Object> filmReqsVo = new FilmReqsVo<>();

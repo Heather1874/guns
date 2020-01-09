@@ -13,6 +13,7 @@ import com.stylefeng.guns.rest.film.vo.NewCatInfo;
 import com.stylefeng.guns.rest.film.vo.NewIndexInfo;
 import com.stylefeng.guns.rest.film.vo.NewSourceInfo;
 import com.stylefeng.guns.rest.film.vo.NewYearInfo;
+import com.stylefeng.guns.rest.film.vo.index.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -200,12 +201,12 @@ public class FilmServiceApiImpl implements FilmServiceApi {
                 MtimeActorT mtimeActorT = mtimeActorTMapper.selectById(mtimeFilmActorT.getActorId());
                 ActorVo actorVo = new ActorVo();
                 actorVo.setRoleName(mtimeFilmActorT.getRoleName());
-                actorVo.setImgAddress(mtimeActorT.getActorImg());
+                actorVo.setImgAddress(mtimeActorT.getActorImg().replace("actors/",""));
                 actorVo.setDirectorName(mtimeActorT.getActorName());
                 actorVoList.add(actorVo);
                 if (mtimeFilmInfoT.getDirectorId() == mtimeFilmActorT.getActorId()) {
                     ActorVo director = new ActorVo();
-                    director.setImgAddress(mtimeActorT.getActorImg());
+                    director.setImgAddress(mtimeActorT.getActorImg().replace("actors/",""));
                     director.setDirectorName(mtimeActorT.getActorName());
                     actors.put("director", director);
                 }
@@ -291,22 +292,50 @@ public class FilmServiceApiImpl implements FilmServiceApi {
      * @return
      */
     @Override
-    public Map getIndex() {
-        HashMap<Object, Object> hashMap = new HashMap<>();
+    public NewIndexInfo getIndex() {
+        NewIndexInfo newIndexInfo = new NewIndexInfo();
+        int current = 1;
+        int size = 8;
 
         // 查询 banners
-        NewIndexInfo newIndexInfo = new NewIndexInfo();
-        int isValid = 0; // 有效
-        /*List<> bannerList = bannerTMapper.selectListByStatus(isValid);
-        //newIndexInfo.getData().setBanners(bannerTMapper.selectListByStatus(isValid));
-        hashMap.put("banners", bannerList);
+        int isValid = 0;
+        List<BannersBean> bannerList = bannerTMapper.selectListByStatus(isValid);
+        newIndexInfo.setBanners(bannerList);
 
-        List<NewIndexInfo.DataBean.HotFilmsBean.FilmInfoBean>
-        hashMap.put("soonFilms", );
-        hashMap.put("hotFilms", );
-        hashMap.put("boxRanking", );
-        hashMap.put("expectRanking", );
-        hashMap.put("top100", );*/
-        return null;
+        // 查询 hotFilms
+        int hotFilmStatus = 1;
+        HotFilmsBean hotFilmsBean = new HotFilmsBean();
+        List<FilmInfoBean> hotFilmInfoList = mtimeFilmTMapper.selectHotFilmInfoListByStatus(hotFilmStatus, (current - 1) * size, size);
+        EntityWrapper<MtimeFilmT> entityWrapper = new EntityWrapper<>();
+        entityWrapper.eq("film_status", hotFilmStatus);
+        long total = mtimeFilmTMapper.selectCount(entityWrapper);
+        hotFilmsBean.setFilmNum(total);
+        hotFilmsBean.setFilmInfo(hotFilmInfoList);
+        newIndexInfo.setHotFilms(hotFilmsBean);
+
+        // 查询 boxRanking
+        List<BoxRankingBean> boxRankingBeanList = mtimeFilmTMapper.selectBoxRandingList(hotFilmStatus, (current - 1) * size, size);
+        newIndexInfo.setBoxRanking(boxRankingBeanList);
+
+        // 查询 soonFilms
+        int soonFilmStatus = 2;
+        SoonFilmsBean soonFilmsBean = new SoonFilmsBean();
+        List<FilmInfoBeanX> soonFilmInfoList = mtimeFilmTMapper.selectSoonFilmInfoListByStatus(soonFilmStatus, (current - 1) * size, size);
+        EntityWrapper<MtimeFilmT> entityWrapper2 = new EntityWrapper<>();
+        entityWrapper2.eq("film_status", soonFilmStatus);
+        long total2 = mtimeFilmTMapper.selectCount(entityWrapper2);
+        soonFilmsBean.setFilmNum(total2);
+        soonFilmsBean.setFilmInfo(soonFilmInfoList);
+        newIndexInfo.setSoonFilms(soonFilmsBean);
+
+        // 查询 expectRanking
+        List<ExpectRankingBean> expectRankingBeanList = mtimeFilmTMapper.selectExpectRankingList(soonFilmStatus, (current - 1) * size, size);
+        newIndexInfo.setExpectRanking(expectRankingBeanList);
+
+        // 查询 top100
+        List<Top100Bean> top100BeanList = mtimeFilmTMapper.selectTop100List((current - 1) * size, size);
+        newIndexInfo.setTop100(top100BeanList);
+
+        return newIndexInfo;
     }
 }
