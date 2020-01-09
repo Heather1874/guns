@@ -10,12 +10,12 @@ public class CinemaReqsVo implements Serializable {
 
     String imgPre = "http://img.meetingshop.cn/";
 
-    Integer status;
+    Integer status = 0;
 
     String msg;
 
     Integer nowPage = 1;
 
-    Integer totalPage;
+    Integer totalPage = 1;
 
 }
