@@ -103,9 +103,12 @@ public class FilmServiceApiImpl implements FilmServiceApi {
     public List<FilmDetail> getFilmsByCondition(FilmGetFilmsParam params) {
         EntityWrapper<MtimeFilmT> filmTEntityWrapper = new EntityWrapper<>();
         filmTEntityWrapper.eq("film_status", params.getShowType());
-        filmTEntityWrapper.like("film_cats", "#" + params.getCatId() + "#");
-        filmTEntityWrapper.eq("film_source", params.getSourceId());
-        filmTEntityWrapper.eq("film_date", params.getYearId());
+        if (params.getCatId() != 99)
+            filmTEntityWrapper.like("film_cats", "#" + params.getCatId() + "#");
+        if (params.getSourceId() != 99)
+            filmTEntityWrapper.eq("film_source", params.getSourceId());
+        if (params.getYearId() != 99)
+            filmTEntityWrapper.eq("film_date", params.getYearId());
         if (params.getSortId() == 1) {
             filmTEntityWrapper.orderBy("film_box_office");
         }
@@ -201,12 +204,12 @@ public class FilmServiceApiImpl implements FilmServiceApi {
                 MtimeActorT mtimeActorT = mtimeActorTMapper.selectById(mtimeFilmActorT.getActorId());
                 ActorVo actorVo = new ActorVo();
                 actorVo.setRoleName(mtimeFilmActorT.getRoleName());
-                actorVo.setImgAddress(mtimeActorT.getActorImg().replace("actors/",""));
+                actorVo.setImgAddress(mtimeActorT.getActorImg().replace("actors/", ""));
                 actorVo.setDirectorName(mtimeActorT.getActorName());
                 actorVoList.add(actorVo);
                 if (mtimeFilmInfoT.getDirectorId() == mtimeFilmActorT.getActorId()) {
                     ActorVo director = new ActorVo();
-                    director.setImgAddress(mtimeActorT.getActorImg().replace("actors/",""));
+                    director.setImgAddress(mtimeActorT.getActorImg().replace("actors/", ""));
                     director.setDirectorName(mtimeActorT.getActorName());
                     actors.put("director", director);
                 }
@@ -248,8 +251,6 @@ public class FilmServiceApiImpl implements FilmServiceApi {
 
         return filmDetailVo;
     }
-
-
 
 
     private List<FilmDetail> getFilmDetailList(List<MtimeFilmT> mtimeFilmTS) {
