@@ -42,8 +42,9 @@ public class UserServiceImpl implements UserService {
     public UpdateUserVo updateUserInfo(UpdateUserVo updateUserVo) {
         MtimeUserT user = transferUpdateToUser(updateUserVo);
         userTMapper.updateById(user);
-        updateUserVo = transferUserToUpdate(updateUserVo,user);
-        return updateUserVo;
+        MtimeUserT mtimeUserT = userTMapper.selectById(user.getUuid());
+        UpdateUserVo updatedUser = transferUserToUpdate(updateUserVo,mtimeUserT);
+        return updatedUser;
     }
 
     private UpdateUserVo transferUserToUpdate(UpdateUserVo updateUserVo, MtimeUserT user) {
