@@ -18,5 +18,47 @@
         <result column="film_time" property="filmTime" />
         <result column="film_status" property="filmStatus" />
     </resultMap>
-
+    <select id="selectHotFilmInfoListByStatus"
+            resultType="com.stylefeng.guns.rest.film.vo.index.FilmInfoBean">
+        select UUID as filmId, film_name as filmName, film_source as filmScore, film_type as filmType, img_address as imgAddress
+        from mtime_film_t
+        <where>
+            film_status = #{filmStatus}
+        </where>
+        limit #{current}, #{size}
+    </select>
+    <select id="selectSoonFilmInfoListByStatus"
+            resultType="com.stylefeng.guns.rest.film.vo.index.FilmInfoBeanX">
+        select UUID as filmId, film_name as filmName, film_time as showTime, film_type as filmType, img_address as imgAddress, film_preSaleNum as expectNum
+        from mtime_film_t
+        <where>
+            film_status = #{filmStatus}
+        </where>
+        limit #{current}, #{size}
+    </select>
+    <select id="selectBoxRandingList" resultType="com.stylefeng.guns.rest.film.vo.index.BoxRankingBean">
+        select UUID as filmId, film_name as filmName, film_box_office as boxNum, img_address as imgAddress
+        from mtime_film_t
+        <where>
+            film_status = #{filmStatus}
+        </where>
+        order by boxNum desc
+        limit #{current}, #{size}
+    </select>
+    <select id="selectExpectRankingList"
+            resultType="com.stylefeng.guns.rest.film.vo.index.ExpectRankingBean">
+        select UUID as filmId, film_name as filmName, film_preSaleNum as expectNum, img_address as imgAddress
+        from mtime_film_t
+        <where>
+            film_status = #{filmStatus}
+        </where>
+        order by expectNum desc
+        limit #{current}, #{size}
+    </select>
+    <select id="selectTop100List" resultType="com.stylefeng.guns.rest.film.vo.index.Top100Bean">
+        select UUID as filmId, film_name as filmName, film_score as score, img_address as imgAddress
+        from mtime_film_t
+        order by score desc
+        limit #{current}, #{size}
+    </select>
 </mapper>

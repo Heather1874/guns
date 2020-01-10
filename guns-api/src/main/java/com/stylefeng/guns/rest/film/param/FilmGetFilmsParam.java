@@ -2,6 +2,8 @@ package com.stylefeng.guns.rest.film.param;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * Created by IntelliJ IDEA.
  * User: ZhouMingZhuang
@@ -9,7 +11,7 @@ import lombok.Data;
  * Time: 20:11
  */
 @Data
-public class FilmGetFilmsParam {
+public class FilmGetFilmsParam implements Serializable {
     Integer showType;
     Integer sortId;
     Integer catId;
@@ -18,4 +20,5 @@ public class FilmGetFilmsParam {
     Integer nowPage;
     Integer pageSize;
     Integer offset;
+    String kw;
 }

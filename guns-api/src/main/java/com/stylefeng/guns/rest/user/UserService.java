@@ -9,4 +9,6 @@ public interface UserService {
     Boolean addUser(RegisterReqVo registerReqVo);
 
     UpdateUserVo updateUserInfo(UpdateUserVo updateUserVo);
+
+    boolean queryUserByNamePassword(String userName, String password);
 }

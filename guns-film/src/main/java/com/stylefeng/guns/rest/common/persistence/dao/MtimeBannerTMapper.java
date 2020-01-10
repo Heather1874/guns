@@ -2,7 +2,7 @@ package com.stylefeng.guns.rest.common.persistence.dao;
 
 import com.stylefeng.guns.rest.common.persistence.model.MtimeBannerT;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.stylefeng.guns.rest.film.vo.NewBannerInfo;
+import com.stylefeng.guns.rest.film.vo.index.BannersBean;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -17,5 +17,6 @@ import java.util.List;
  */
 public interface MtimeBannerTMapper extends BaseMapper<MtimeBannerT> {
 
-    List<NewBannerInfo> selectListByStatus(@Param("isValid") int isValid);
+
+    List<BannersBean> selectListByStatus(@Param("isValid") int isValid);
 }
