@@ -5,7 +5,9 @@ import com.stylefeng.guns.rest.config.properties.JwtProperties;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import redis.clients.jedis.Jedis;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +33,26 @@ public class JwtTokenUtil {
 
     @Autowired
     private JwtProperties jwtProperties;
+
+    @Autowired
+    private Jedis jedis;
+
+    /**
+     * 获取用户名从 redis 中
+     * @param request
+     * @return
+     */
+    public String getUsernameFromRedis(HttpServletRequest request) {
+        final String requestHeader = request.getHeader(jwtProperties.getHeader());
+        String authToken = null;
+        String userName = null;
+        if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
+            authToken = requestHeader.substring(7);
+
+            userName = jedis.get(authToken);
+        }
+        return userName;
+    }
 
     /**
      * 获取用户名从token中

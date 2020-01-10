@@ -1,10 +1,12 @@
 package com.stylefeng.guns.rest.usercontroller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.stylefeng.guns.rest.modular.auth.util.JwtTokenUtil;
 import com.stylefeng.guns.rest.user.UserService;
 import com.stylefeng.guns.rest.user.vo.RegisterReqVo;
 import com.stylefeng.guns.rest.user.vo.ResponseVo;
 import com.stylefeng.guns.rest.user.vo.UpdateUserVo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -84,5 +87,15 @@ public class UserController {
         return responseVo;
     }
 
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    @RequestMapping("test")
+    public String test(HttpServletRequest httpServletRequest) {
+        String usernameFromRedis = jwtTokenUtil.getUsernameFromRedis(httpServletRequest);
+        System.out.println(usernameFromRedis);
+
+        return "ok";
+    }
 
 }
