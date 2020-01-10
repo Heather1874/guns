@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import redis.clients.jedis.Jedis;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -36,6 +37,9 @@ public class AuthController {
     @Reference
     UserService userService;
 
+    @Autowired
+    Jedis jedis;
+
     @RequestMapping(value = "${jwt.auth-path}")
     public ResponseVo/*ResponseEntity<?>*/ createAuthenticationToken(AuthRequest authRequest) {
 
@@ -45,6 +49,11 @@ public class AuthController {
         if (validate) {
             final String randomKey = jwtTokenUtil.getRandomKey();
             final String token = jwtTokenUtil.generateToken(authRequest.getUserName(), randomKey);
+
+            // 用户登录成功，token 和 userName 存入缓存，有效期 1800s
+            int expireSecods = 1800;
+            jedis.set(token, authRequest.getUserName());
+            jedis.expire(token, expireSecods);
 
             HashMap<Object, Object> hashMap = new HashMap<>();
             hashMap.put("randomkey", randomKey);
